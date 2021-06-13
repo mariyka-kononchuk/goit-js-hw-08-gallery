@@ -63,3 +63,51 @@ const galleryItems = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+
+// const makeGallery = galleryItems => {
+//   return galleryItems.map((image) => {
+//     const imageEl = document.createElement('img');
+//     imageEl.src = image.preview;
+//     imageEl.alt = image.description;
+//     imageEl.width = 480;
+//     imageEl.style.margin = 20;
+
+//     console.log(imageEl);
+    
+//     const itemEl = document.createElement('li');
+//     itemEl.appendChild(imageEl);
+//     itemEl.classList.add('list-item');
+  
+//     console.log(itemEl);
+//     return itemEl;
+//   })
+// }
+
+// const elements = makeGallery(galleryItems);
+// console.log(elements);
+// const listImagesEl = document.querySelector('ul js-gallery');
+// listImagesEl.append(...elements);
+
+const makeImage = ({preview, description})=> {
+  
+   const imageEl = document.createElement('img');
+    imageEl.src = preview;
+    imageEl.alt = description;
+    
+    //imageEl.style.margin = 20;
+    imageEl.classList.add('gallery__image');
+
+    const itemEl = document.createElement('li');
+    itemEl.appendChild(imageEl);
+    itemEl.classList.add('gallery__item');
+  console.log(itemEl);
+    return itemEl;
+  }
+
+const elements = galleryItems.map(makeImage);
+console.log(elements);
+  
+const listImagesEl = document.querySelector('ul');
+console.log(listImagesEl);
+ 
+listImagesEl.append(...elements);
