@@ -64,6 +64,14 @@ const galleryItems = [
   },
 ];
 
+const refs = {
+  imageGallery: document.querySelector('.js-gallery'),
+  imageModal: document.querySelector('.lightbox__image'),
+  divModal: document.querySelector('.js-lightbox'),
+  buttonModal:document.querySelector('.lightbox__button')
+};
+
+
 // const makeGallery = galleryItems => {
 //   return galleryItems.map((image) => {
 //     const imageEl = document.createElement('img');
@@ -88,26 +96,49 @@ const galleryItems = [
 // const listImagesEl = document.querySelector('ul js-gallery');
 // listImagesEl.append(...elements);
 
-const makeImage = ({preview, description})=> {
+//Создание и рендер разметки по массиву данных
+const makeImage = ({preview, description, original})=> {
   
+ 
    const imageEl = document.createElement('img');
     imageEl.src = preview;
     imageEl.alt = description;
-    
-    //imageEl.style.margin = 20;
+    imageEl.dataset.source = original;
     imageEl.classList.add('gallery__image');
 
-    const itemEl = document.createElement('li');
-    itemEl.appendChild(imageEl);
-    itemEl.classList.add('gallery__item');
-  console.log(itemEl);
-    return itemEl;
-  }
-
-const elements = galleryItems.map(makeImage);
-console.log(elements);
+    const linkEl = document.createElement('a');
+    linkEl.href = imageEl.dataset.source;
+  linkEl.classList.add('gallery__link');
   
-const listImagesEl = document.querySelector('ul');
-console.log(listImagesEl);
- 
-listImagesEl.append(...elements);
+    linkEl.appendChild(imageEl);
+
+    const itemEl = document.createElement('li');
+    itemEl.appendChild(linkEl);
+    itemEl.classList.add('gallery__item');
+    return itemEl;
+}
+  
+const elements = galleryItems.map(makeImage);
+
+
+refs.imageGallery.append(...elements);
+
+refs.imageGallery.addEventListener('click', onOpenModal);
+
+function onOpenModal(event) {
+  if (event.target.nodeName !== "IMG") {
+    return;
+  }
+  event.preventDefault();
+  console.log(event.target.dataset.source);
+  refs.divModal.classList.add('is-open');
+  refs.imageModal.src = event.target.dataset.source;
+  refs.buttonModal.addEventListener('click', onCloseModal);
+}
+
+
+
+function onCloseModal() {
+  refs.divModal.classList.remove('is-open');
+  refs.divModal.classList.add('is-close')
+}
