@@ -68,60 +68,26 @@ const refs = {
   imageGallery: document.querySelector('.js-gallery'),
   imageModal: document.querySelector('.lightbox__image'),
   divModal: document.querySelector('.js-lightbox'),
-  buttonModal:document.querySelector('.lightbox__button')
+  buttonModal: document.querySelector('.lightbox__button'),
+  overlayModal: document.querySelector('.lightbox__overlay')
 };
 
-
-// const makeGallery = galleryItems => {
-//   return galleryItems.map((image) => {
-//     const imageEl = document.createElement('img');
-//     imageEl.src = image.preview;
-//     imageEl.alt = image.description;
-//     imageEl.width = 480;
-//     imageEl.style.margin = 20;
-
-//     console.log(imageEl);
-    
-//     const itemEl = document.createElement('li');
-//     itemEl.appendChild(imageEl);
-//     itemEl.classList.add('list-item');
-  
-//     console.log(itemEl);
-//     return itemEl;
-//   })
-// }
-
-// const elements = makeGallery(galleryItems);
-// console.log(elements);
-// const listImagesEl = document.querySelector('ul js-gallery');
-// listImagesEl.append(...elements);
-
-//Создание и рендер разметки по массиву данных
-const makeImage = ({preview, description, original})=> {
-  
- 
-   const imageEl = document.createElement('img');
-    imageEl.src = preview;
-    imageEl.alt = description;
-    imageEl.dataset.source = original;
-    imageEl.classList.add('gallery__image');
-
-    const linkEl = document.createElement('a');
-    linkEl.href = imageEl.dataset.source;
-  linkEl.classList.add('gallery__link');
-  
-    linkEl.appendChild(imageEl);
-
-    const itemEl = document.createElement('li');
-    itemEl.appendChild(linkEl);
-    itemEl.classList.add('gallery__item');
-    return itemEl;
+function makeImage(images) {
+  return images
+    .map(({ preview, description, original }) => {
+      return `
+      <li class="gallery__item">
+      <a class="gallery__link" href=${original}>
+      <img class="gallery__image" src=${preview} data-source=${original} alt=${description}/>
+      </a>
+      </li>`;
+    })
+    .join("");
 }
-  
-const elements = galleryItems.map(makeImage);
 
+const gallery = makeImage(galleryItems);
 
-refs.imageGallery.append(...elements);
+refs.imageGallery.insertAdjacentHTML("beforeend", gallery);
 
 refs.imageGallery.addEventListener('click', onOpenModal);
 
@@ -130,15 +96,25 @@ function onOpenModal(event) {
     return;
   }
   event.preventDefault();
-  console.log(event.target.dataset.source);
   refs.divModal.classList.add('is-open');
   refs.imageModal.src = event.target.dataset.source;
+  refs.imageModal.alt = event.target.alt;
+
   refs.buttonModal.addEventListener('click', onCloseModal);
-}
+  refs.overlayModal.addEventListener('click', onCloseModal);
 
-
+  document.addEventListener('keydown', event => {
+    if (event.code === "Escape") {
+      onCloseModal();
+    };
+  }
+  )
+};
 
 function onCloseModal() {
   refs.divModal.classList.remove('is-open');
-  refs.divModal.classList.add('is-close')
+  refs.divModal.classList.add('is-close');
+  refs.buttonModal.removeEventListener('click', onCloseModal);
+  refs.overlayModal.removeEventListener('click', onCloseModal);
 }
+
